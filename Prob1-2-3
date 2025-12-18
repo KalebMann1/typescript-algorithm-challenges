@@ -1,0 +1,79 @@
+function factorial(n: number): number {
+  return n <= 1 ? 1 : n * factorial(n - 1);
+}
+
+function getLexicographicPermutation(n: number, digits: number[]): string {
+  let result = "";
+  let k = n - 1;
+
+  while (digits.length > 0) {
+      let fact = factorial(digits.length - 1);
+      let index = Math.floor(k / fact);
+      result += digits[index];
+      digits.splice(index, 1);
+      k %= fact;
+  }
+
+  return result;
+}
+
+const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const millionthPermutation = getLexicographicPermutation(1000000, digits);
+
+console.log(millionthPermutation);
+function countWaysToMake(amount: number, coins: number[]): number {
+  let ways: number[] = Array(amount + 1).fill(0);
+  ways[0] = 1; 
+
+  for (let coin of coins) {
+      for (let i = coin; i <= amount; i++) {
+          ways[i] += ways[i - coin];
+      }
+  }
+
+  return ways[amount];
+}
+
+const coins = [1, 2, 5, 10, 20, 50, 100, 200];
+const targetAmount = 200;
+
+console.log(countWaysToMake(targetAmount, coins)); 
+import * as fs from 'fs';
+
+
+function generateTriangleNumbers(limit: number): Set<number> {
+    const triangleNumbers = new Set<number>();
+    let n = 1;
+    let t_n = 0;
+
+    while (t_n <= limit) {
+        t_n = (n * (n + 1)) / 2;
+        triangleNumbers.add(t_n);
+        n++;
+    }
+
+    return triangleNumbers;
+}
+
+function getWordValue(word: string): number {
+    return word.split("").reduce((sum, char) => sum + (char.charCodeAt(0) - 'A'.charCodeAt(0) + 1), 0);
+}
+
+function countTriangleWords(filename: string): number {
+    const words = fs.readFileSync(filename, 'utf8')
+                     .replace(/"/g, '') 
+                     .split(',');        
+
+   
+    const maxWordValue = 20 * 26;
+
+    const triangleNumbers = generateTriangleNumbers(maxWordValue);
+
+    return words.filter(word => triangleNumbers.has(getWordValue(word))).length;
+}
+
+
+const filename = 'words.txt';
+console.log(countTriangleWords(filename)); 
+
+
